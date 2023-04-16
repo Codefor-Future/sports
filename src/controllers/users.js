@@ -15,7 +15,7 @@ const controller = class UsersController {
 
     getUserByEmail(email){
         return new Promise((resolve,reject) => {
-            this.con.query('SELECT * FROM `users` WHERE `email` = "'+email+'"', function (err, result) {
+            this.con.query('SELECT * FROM `Clients` WHERE `adresse_courriel` = "'+email+'"', function (err, result) {
                 if (result.length < 1) {
                     reject(new Error("User not found"));
                 } else {
@@ -27,7 +27,7 @@ const controller = class UsersController {
 
     isAdmin(id){
         return new Promise((resolve,reject) => {
-            this.con.query('SELECT * FROM `users` WHERE `id` = "'+id+'"', function (err, result) {
+            this.con.query('SELECT * FROM `Clients` WHERE `id` = "'+id+'"', function (err, result) {
                 if (result == undefined) {
                     reject(new Error("User not found"));
                 } else {
@@ -40,7 +40,7 @@ const controller = class UsersController {
 
     getUserById(id){
         return new Promise((resolve,reject) => {
-            this.con.query('SELECT * FROM `users` WHERE `id` = "'+id+'"', function (err, result) {
+            this.con.query('SELECT * FROM `Clients` WHERE `adresse_courriel` = "'+id+'"', function (err, result) {
                 if (result.length < 1) {
                     reject(new Error("User not found"));
                 } else {
@@ -52,7 +52,7 @@ const controller = class UsersController {
 
     update(name, email, user) {
         return new Promise((resolve,reject) => {
-            this.con.query('UPDATE `users` SET `name` = ? , `email` = ? WHERE `id` = ?', [name,email,user] , function (err, result) {
+            this.con.query('UPDATE `Clients` SET `name` = ? , `email` = ? WHERE `id` = ?', [name,email,user] , function (err, result) {
                 if (err) {
                     reject(new Error(err));
                 } else {
@@ -64,7 +64,7 @@ const controller = class UsersController {
 
     updatePassword(hashed, user) {
         return new Promise((resolve,reject) => {
-            this.con.query('UPDATE `users` SET `password` = ? WHERE `id` = ?', [hashed,user] , function (err, result) {
+            this.con.query('UPDATE `Clients` SET `password` = ? WHERE `id` = ?', [hashed,user] , function (err, result) {
                 if (err) {
                     reject(new Error(err));
                 } else {
@@ -76,7 +76,7 @@ const controller = class UsersController {
 
     getEmployees() {
         return new Promise((resolve,reject) => {
-            this.con.query('SELECT * FROM `users` WHERE `user_type` in ("employee","admin")' , function (err, result) {
+            this.con.query('SELECT * FROM `Clients` WHERE `user_type` in ("employee","admin")' , function (err, result) {
                 if (err) {
                     reject(new Error(err));
                 } else {
@@ -88,7 +88,7 @@ const controller = class UsersController {
 
     updateEmployee(user, id) {
         return new Promise((resolve,reject) => {
-            this.con.query('UPDATE `users` SET ? WHERE `id` = ?', [user, id] , function (err, result) {
+            this.con.query('UPDATE `Clients` SET ? WHERE `id` = ?', [user, id] , function (err, result) {
                 if (err) {
                     reject(new Error(err));
                 } else {

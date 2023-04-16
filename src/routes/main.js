@@ -47,7 +47,7 @@ router.get("/", (req, res) => {
 });
 
 // Products page
-router.get("/hamburguers", async (req, res) => {
+router.get("/products", async (req, res) => {
     const ProductsController = require('../controllers/products.js');
     const Products = new ProductsController();
     let products = []
@@ -58,7 +58,7 @@ router.get("/hamburguers", async (req, res) => {
         res.render(`${config.views}/public/error.ejs`, {error: e});
     }
 
-    res.render(`${config.views}/public/hamburguers.ejs`, {products: products});
+    res.render(`${config.views}/public/products.ejs`, {products: products});
 });
 
 // Product order page
@@ -86,15 +86,16 @@ router.get("/cart", authenticate(), async (req, res) => {
 
     try {
         cartContent = await Cart.getContent(req.session.passport.user);
-        cartContent = JSON.parse(cartContent.content);
-        let idList = cartContent.map(({ id }) => id)
-        idList = Array.from(new Set(idList)).toString();
-        products = await Products.getByIdArray(idList);
-    } catch {
+        // cartContent = JSON.parse(cartContent.content);
+        // let idList = cartContent.map(({ id }) => id)
+        // idList = Array.from(new Set(idList)).toString();
+        // products = await Products.getByIdArray(idList);
+        console.log(cartContent)
+    } catch(error) {
+        console.log(error)
         cartContent = false;
     }
-
-    if (cartContent) products = JSON.parse(JSON.stringify(products))
+    if (cartContent) products = JSON.parse(JSON.stringify(cartContent))
     res.render(`${config.views}/public/cart.ejs`, {cart: cartContent, products: products});
 });
 

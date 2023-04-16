@@ -46,7 +46,7 @@ router.post("/addToCart", async (req, res) => {
     let response;
 
     try {
-        response = await Cart.addToCart(req.body.addToCart, req.session.passport.user);
+        response = await Cart.addToCart(req.body.product, req.session.passport.user);
     } catch (e) {
         response = e;
     }

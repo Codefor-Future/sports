@@ -1,6 +1,6 @@
 // Updating active link on navbar
 document.querySelector('.active').classList.remove('active');
-document.querySelector('a[href="/hamburguers"]').classList.add('active');
+document.querySelector('a[href="/products"]').classList.add('active');
 
 // Add product
 const addButtons = document.querySelectorAll('.bi-caret-right-fill');

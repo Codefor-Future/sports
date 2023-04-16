@@ -5,13 +5,24 @@ const config = require('../config/app-config.js');
 const express = require("express");
 const app = express();
 
+
+
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
+const helmet = require('helmet')
 // required libraries
 require('dotenv').config();
-const helmet = require('helmet')
 app.use(helmet())
+app.use(
+    helmet.contentSecurityPolicy({
+      useDefaults: true,
+      directives: {
+        "img-src": ["'self'", "https: data:"],
+        scriptSrc: ["'self'", "'unsafe-inline'", 'https://cdnjs.cloudflare.com']
+      }
+    })
+  )
 
 // static folder
 app.use(express.static(config.root));

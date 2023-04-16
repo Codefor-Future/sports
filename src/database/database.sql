@@ -72,8 +72,19 @@ CREATE TABLE IF NOT EXISTS produits (
   prix_d_achat DECIMAL(10,2),
   description TEXT,
   sexe enum('femme', 'homme'),
+  image VARCHAR(1000),
   UNIQUE (numero_de_reference)
 );
+-- jn box between product and panier
+CREATE TABLE IF NOT EXISTS panier_produits (
+  id_panier INT,
+  numero_de_reference INT,
+  quantite INT,
+  PRIMARY KEY (id_panier, numero_de_reference),
+  FOREIGN KEY (id_panier) REFERENCES panier(id_panier),
+  FOREIGN KEY (numero_de_reference) REFERENCES produits(numero_de_reference)
+);
+
 -- TODO MAKE JN TABLES FOR BOTH OF THESE
 CREATE TABLE IF NOT EXISTS Vetements (
   numero_de_reference INT PRIMARY KEY,
@@ -239,14 +250,20 @@ CREATE TABLE Regroupe (
 /*
 INSERT ITEMS
 */
+
+INSERT INTO Clients (nom, adresse_courriel, mot_de_passe, numero_telephone, adresse, DateDeNaissance)
+VALUES 
+  ('Abhi', 'abhi@user.com', 'Abc123!@#', '+1234567890', '123 Main St, Anytown USA', '1990-01-01'),
+  ('Jane Smith', 'janesmith@example.com', '123XYZ!@#', '+9876543210', '456 High St, Anytown USA', '1985-05-15');
+  
 INSERT INTO fournisseur (adresse_fournisseur) VALUES
   ('123 Main St, Anytown, USA'),
   ('456 Market St, Anytown, USA');
 
-INSERT INTO produits (marque, nom_du_produit, prix_de_vente, prix_d_achat, description, sexe, fournit)
+INSERT INTO produits (marque, nom_du_produit, prix_de_vente, prix_d_achat, description, sexe, fournit, image)
 VALUES 
-  ('Adidas', 'Sports Shoes', 79.99, 50.00, 'Mens sports shoes', 'homme', 1),
-  ('Nike', 'Sport T-shirt', 29.99, 20.00, 'Womens sport T-shirt', 'femme', 2);
+  ('Adidas', 'Sports Shoes', 79.99, 50.00, 'Mens sports shoes', 'homme', 1, 'https://www.shutterstock.com/image-photo/jeddah-saudi-arabia-september-8-260nw-2038241135.jpg'),
+  ('Nike', 'Sport T-shirt', 29.99, 20.00, 'Womens sport T-shirt', 'femme', 2, 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bmlrZSUyMHNob2V8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60');
 
 
 

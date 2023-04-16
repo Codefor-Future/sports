@@ -69,7 +69,7 @@ passport.use('local', new LocalStrategy(async function (email, password, done) {
     try {
         if (
             // await bcrypt.compare(
-                password == user.password
+                password == user.mot_de_passe
                 // )
                 ) {
             return done(null, user)
@@ -82,7 +82,7 @@ passport.use('local', new LocalStrategy(async function (email, password, done) {
 }));
 
 passport.serializeUser(function(user, done) {
-    done(null, user.id);
+    done(null, user.adresse_courriel);
 });
 
 passport.deserializeUser(async function(id, done) {
@@ -180,7 +180,7 @@ router.post("/reset", async (req, res) => {
 
         const randomPass = Math.random().toString(36).slice(-8);
         hashedPassword = await bcrypt.hash(randomPass, 10);
-        User.updatePassword(hashedPassword, user.id);
+        User.updatePassword(hashedPassword, user.adresse_courriel);
 
         let transport = nodemailer.createTransport({
             host: process.env.EMAIL_HOST,
@@ -210,7 +210,7 @@ router.post("/reset", async (req, res) => {
 function notAuthenticated() {
 	return (req, res, next) => {
         if (!req.isAuthenticated()) return next();
-        res.redirect('/hamburguers')
+        res.redirect('/products')
 	}
 }
 
