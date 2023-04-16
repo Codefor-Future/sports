@@ -50,11 +50,12 @@ router.get("/", (req, res) => {
 router.get("/hamburguers", async (req, res) => {
     const ProductsController = require('../controllers/products.js');
     const Products = new ProductsController();
-
+    let products = []
     try {
         products = await Products.getPaginated(page = 0);
     } catch (e) {
-        throw e;
+        console.log(e)
+        res.render(`${config.views}/public/error.ejs`, {error: e});
     }
 
     res.render(`${config.views}/public/hamburguers.ejs`, {products: products});

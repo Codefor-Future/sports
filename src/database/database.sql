@@ -1,4 +1,4 @@
-DROP DATABASE projet_equipe45;
+DROP DATABASE Projet_equipe45;
 CREATE DATABASE IF NOT EXISTS Projet_equipe45;
 
 
@@ -19,12 +19,12 @@ CREATE TABLE IF NOT EXISTS Clients
   mot_de_passe     VARCHAR(100)       NOT NULL CHECK (mot_de_passe REGEXP '^(?=.*[A-Z])(?=.*[!@#$&*])(?=.{8,})'),
   numero_telephone VARCHAR(20)        NOT NULL CHECK (numero_telephone REGEXP '^[+]?[0-9]{8,20}$'),
   adresse          VARCHAR(100)       NOT NULL CHECK (LENGTH(adresse) <= 100),
-  DateDeNaissance  date,
-  sexe enum('femme', 'homme'),
+  DateDeNaissance  date
 );
 
 
-CREATE TABLE IF NOT EXISTS panier (
+CREATE TABLE IF NOT EXISTS panier 
+(
   id_panier INT PRIMARY KEY AUTO_INCREMENT,
   montant_panier DECIMAL(10,2),
   adresse_courriel VARCHAR(80),
@@ -45,51 +45,52 @@ CREATE TABLE IF NOT EXISTS commande (
 
 CREATE TABLE IF NOT EXISTS fournisseur (
   id_fournisseur INT PRIMARY KEY AUTO_INCREMENT,
-  adresse_fournisseur VARCHAR(150)
+  adresse_fournisseur VARCHAR(150),
+  
+  UNIQUE (id_fournisseur)
 );
 
+
+-- CREATE TABLE IF NOT EXISTS produits (
+--   numero_de_reference INT PRIMARY KEY AUTO_INCREMENT,
+--   marque VARCHAR(255),
+--   nom_du_produit VARCHAR(255),
+--   id_fournisseur INT,
+--   prix_de_vente DECIMAL(10,2),
+--   prix_d_achat DECIMAL(10,2),
+--   description TEXT,
+--   -- sexe enum('femme', 'homme'),
+--   FOREIGN KEY (id_fournisseur) REFERENCES fournisseur(id_fournisseur));
+
+-- DROP TABLE produits;
 
 CREATE TABLE IF NOT EXISTS produits (
   numero_de_reference INT PRIMARY KEY AUTO_INCREMENT,
   marque VARCHAR(255),
   nom_du_produit VARCHAR(255),
-  id_fournisseur INT,
   prix_de_vente DECIMAL(10,2),
   prix_d_achat DECIMAL(10,2),
   description TEXT,
   sexe enum('femme', 'homme'),
-  FOREIGN KEY (id_fournisseur) REFERENCES fournisseur(id_fournisseur));
-
-DROP TABLE produits;
-
-CREATE TABLE IF NOT EXISTS produits (
-  numero_de_reference INT PRIMARY KEY AUTO_INCREMENT,
-  marque VARCHAR(255),
-  nom_du_produit VARCHAR(255),
-  prix_de_vente DECIMAL(10,2),
-  prix_d_achat DECIMAL(10,2),
-  description TEXT,
-  sexe enum('femme', 'homme')
+  UNIQUE (numero_de_reference)
 );
-
+-- TODO MAKE JN TABLES FOR BOTH OF THESE
 CREATE TABLE IF NOT EXISTS Vetements (
   numero_de_reference INT PRIMARY KEY,
   type_vetement VARCHAR(50),
   taille VARCHAR(5),
-  couleur VARCHAR(50),
-  FOREIGN KEY (numero_de_reference) REFERENCES produits(numero_de_reference)
+  couleur VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS Chaussures (
   numero_de_reference INT PRIMARY KEY,
   pointure INT(2),
-  couleur VARCHAR(50),
-  FOREIGN KEY (numero_de_reference) REFERENCES produits(numero_de_reference)
+  couleur VARCHAR(50)
 );
 
-CREATE TABLE IF NOT EXISTS reviews (
+CREATE TABLE IF NOT EXISTS Reviews (
   id_review INT PRIMARY KEY AUTO_INCREMENT,
-  note INT CHECK (note >= 0 AND note <= 5),   #
+  note INT CHECK (note >= 0 AND note <= 5),
   numero_de_reference INT,
   commentaire TEXT,
   FOREIGN KEY (numero_de_reference) REFERENCES produits(numero_de_reference)
@@ -142,7 +143,7 @@ ALTER TABLE produits
 ALTER TABLE ListeReview
     ADD COLUMN evalue INT NOT NULL;
 
-ALTER TABLE reviews
+ALTER TABLE Reviews
     ADD COLUMN donne CHAR(80) NOT NULL;
 
 ALTER TABLE Facture
@@ -155,7 +156,7 @@ ALTER TABLE produits
     ADD COLUMN promouvoir int;
 
 
-ALTER TABLE clients
+ALTER TABLE Clients
     ADD COLUMN image VARCHAR(200);
 
 /*
@@ -164,74 +165,62 @@ ALTER TABLE clients
  ***************************************************
 */
 ALTER TABLE produits
-    ADD CONSTRAINT promouvoir
-    FOREIGN KEY(promouvoir) REFERENCES promotion(id_promotion);
+    ADD FOREIGN KEY (promouvoir) REFERENCES Promotion(id_promotion);
 
 
 ALTER TABLE commande
-    ADD CONSTRAINT accompli
-    FOREIGN KEY (accompli) REFERENCES clients(adresse_courriel) ON DELETE NO ACTION ;
+    ADD FOREIGN KEY (accompli) REFERENCES Clients(adresse_courriel) ON DELETE NO ACTION ;
 
 
-ALTER TABLE facture
-    ADD CONSTRAINT paie
-    FOREIGN KEY (paie) REFERENCES clients(adresse_courriel) ON DELETE NO ACTION ;
+ALTER TABLE Facture
+    ADD FOREIGN KEY (paie) REFERENCES Clients(adresse_courriel) ON DELETE NO ACTION ;
 
 
 
 ALTER TABLE produits
-    ADD CONSTRAINT fournir
-    FOREIGN KEY (fournit) REFERENCES fournisseur(id_fournisseur) ON DELETE NO ACTION;
+    ADD FOREIGN KEY (fournit) REFERENCES fournisseur(id_fournisseur) ON DELETE NO ACTION;
 
-ALTER TABLE listereview
-    ADD CONSTRAINT evalue
-    FOREIGN KEY (evalue) REFERENCES produits(numero_de_reference) ON DELETE NO ACTION;
+ALTER TABLE ListeReview
+    ADD FOREIGN KEY (evalue) REFERENCES produits(numero_de_reference) ON DELETE NO ACTION;
 
 
-ALTER TABLE reviews
-    ADD CONSTRAINT donne
-    FOREIGN KEY (donne) REFERENCES clients(adresse_courriel) ON DELETE NO ACTION;
+ALTER TABLE Reviews
+    ADD FOREIGN KEY (donne) REFERENCES Clients(adresse_courriel) ON DELETE NO ACTION;
 
 
 
-ALTER TABLE Commande
-    ADD CONSTRAINT id_panier
-    FOREIGN KEY (id_panier)
+ALTER TABLE commande
+    ADD FOREIGN KEY (id_panier)
     REFERENCES panier(id_panier)
     ON DELETE CASCADE;
 
 
 ALTER TABLE ListeReview
-    ADD CONSTRAINT review_id
-    FOREIGN KEY (review_id)
-    REFERENCES reviews(id_review)
+    ADD FOREIGN KEY (review_id)
+    REFERENCES Reviews(id_review)
     ON DELETE CASCADE;
 
 
 
 ALTER TABLE panier
-    ADD CONSTRAINT addresse_courriel
-    FOREIGN KEY (adresse_courriel)
-    REFERENCES clients(adresse_courriel)
+    ADD FOREIGN KEY (adresse_courriel)
+    REFERENCES Clients(adresse_courriel)
     ON DELETE CASCADE;
 
 
 
-ALTER TABLE reviews
-    ADD CONSTRAINT numero_ref
-    FOREIGN KEY (numero_de_reference)
+ALTER TABLE Reviews
+    ADD FOREIGN KEY (numero_de_reference)
     REFERENCES produits(numero_de_reference)
     ON DELETE CASCADE;
 
 ALTER TABLE wish_list
-    ADD CONSTRAINT num_ref
-    FOREIGN KEY (numero_de_reference)
+    ADD FOREIGN KEY (numero_de_reference)
     REFERENCES produits(numero_de_reference)
     ON DELETE CASCADE;
 
 ALTER TABLE Promotion
-    ADD CONSTRAINT numm_ref
-    FOREIGN KEY (numero_reference)
+    ADD FOREIGN KEY (numero_reference)
     REFERENCES produits(numero_de_reference)
     ON DELETE CASCADE;
 
@@ -246,6 +235,18 @@ CREATE TABLE Regroupe (
     UNIQUE(adresse_courriel)
 );
 
+
+/*
+INSERT ITEMS
+*/
+INSERT INTO fournisseur (adresse_fournisseur) VALUES
+  ('123 Main St, Anytown, USA'),
+  ('456 Market St, Anytown, USA');
+
+INSERT INTO produits (marque, nom_du_produit, prix_de_vente, prix_d_achat, description, sexe, fournit)
+VALUES 
+  ('Adidas', 'Sports Shoes', 79.99, 50.00, 'Mens sports shoes', 'homme', 1),
+  ('Nike', 'Sport T-shirt', 29.99, 20.00, 'Womens sport T-shirt', 'femme', 2);
 
 
 
