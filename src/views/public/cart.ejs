@@ -33,17 +33,24 @@
 								<h5 class="col-2 my-auto text-center" data-product="<%= product.id %>" data-size="<%= product.size %>">
 									<%= product.marque %>
 								</h5>
-								<h5 class="col-2 my-auto">€<span id="unityPrice-<%= product.size + product.id %>"><%= product.prix_d_achat %></span></h5>
-								<h5 class="col-2 my-auto">€<span id="totalPrice-<%= product.size + product.id %>"><%= product.prix_d_achat * product.quantite %></span></h5>
+								<h5 class="col-2 my-auto">$<span id="unityPrice-<%= product.size + product.id %>"><%= product.prix_d_achat %></span></h5>
+								<h5 class="col-2 my-auto">$<span id="totalPrice-<%= product.size + product.id %>"><%= product.prix_d_achat * product.quantite %></span></h5>
 								<% product.montant_panier %>
 						<% } %>
 								<div class="col-10"></div>
 								<h5 class="col-2 bg-white rounded  py-1">Total</h5>
 								<div class="col-10"></div>
-								<h5 class="col-2">€<span id="cartTotal"><%= total %></span></h5>
-								<form method="GET" action="/checkout" class="col-12">
+								<h5 class="col-2">$<span id="cartTotal">
+									<%= cart.reduce((total, item) => total + item.prix_d_achat, 0) %>
+								</span></h5>
+								<button class="btn btn-lg btn-dark" id="createOrderButton"
+														data-product-id="<%= cart.reduce((total, item) => total + item.prix_d_achat, 0) %>"
+														data-placement="left">
+														Create Order
+													</button>
+								<!-- <form method="GET" action="/checkout" class="col-12">
 									<input type="submit" class="btn btn-dark col-12 mt-2" value="Checkout">
-								</form>
+								</form> -->
 						<% } else { %>
 							<h2 class="col-12 text-center text-white my-5 py-3 rounded bg-secondary">No items on your cart :(</h2>
 						<% } %>
@@ -51,6 +58,9 @@
 				<div class="col"></div>
 			</div>
 		</div>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.5/axios.min.js"
+				integrity="sha512-nnNHpffPSgINrsR8ZAIgFUIMexORL5tPwsfktOTxVYSv+AUAILuFYWES8IHl+hhIhpFGlKvWFiz9ZEusrPcSBQ=="
+				crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 		<script src="/public/js/cartPage.js"></script>
     </body>
 </html>

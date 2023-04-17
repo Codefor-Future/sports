@@ -39,6 +39,19 @@ router.get("/checkStock", async (req, res) => {
     res.send(stock);
 });
 
+router.post("/createOrder", async (req, res) => {
+    const CartController = require('../controllers/cart.js');
+    const Cart = new CartController();
+    let response;
+
+    try {
+        response = await Cart.createOrder(req.body, req.session.passport.user);
+    } catch (e) {
+        response = e;
+    }
+
+    res.send(response)
+});
 // Add products to cart
 router.post("/addToCart", async (req, res) => {
     const CartController = require('../controllers/cart.js');

@@ -121,6 +121,27 @@ router.get("/wishlist", authenticate(), async (req, res) => {
     if (items) products = JSON.parse(JSON.stringify(items))
     res.render(`${config.views}/public/wishList.ejs`, { products: products });
 });
+router.get("/orders", authenticate(), async (req, res) => {
+    const ProductsController = require('../controllers/products.js');
+    const Products = new ProductsController();
+    const CartController = require('../controllers/cart.js');
+    const Cart = new CartController();
+    let items;
+    let products;
+    try {
+        items = await Cart.getOrders(req.session.passport.user);
+        // items = JSON.parse(items.content);
+        // let idList = items.map(({ id }) => id)
+        // idList = Array.from(new Set(idList)).toString();
+        // products = await Products.getByIdArray(idList);
+        console.log(items)
+    } catch (error) {
+        console.log(error)
+        cartContent = false;
+    }
+    if (items) products = JSON.parse(JSON.stringify(items))
+    res.render(`${config.views}/public/orders.ejs`, { products: products });
+});
 
 // checkout process
 router.get("/checkout", authenticate(), async (req, res) => {

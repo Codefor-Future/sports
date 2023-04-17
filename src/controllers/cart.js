@@ -8,6 +8,80 @@ const controller = class ProductsController {
         // mysql connection
         this.pool = mysql.createPool(config.sqlCon);
     }
+    async createOrder(values, email) {
+        const connection = await new Promise((resolve, reject) => {
+            this.pool.getConnection((err, connection) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(connection);
+                }
+            });
+        });
+
+        try {// Get product ID and user email from request body
+            const userEmail = email;
+
+            // fetch card id
+            const cart = await new Promise((resolve, reject) => {
+                connection.query('SELECT * FROM panier WHERE adresse_courriel = ?', [userEmail], (err, connection) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(connection);
+                    }
+                });
+            })
+
+            // insert to commande 
+            const add = await new Promise((resolve, reject) => {
+                connection.query('INSERT INTO commande (montant_total, statut_payement, methode_payement, id_panier, date_de_commande, statut_de_livraison, accompli) VALUES (?,?,?,?,?,?,?)', [values.total, values.paymentStatus, values.paymentMethod, cart[0].id_panier, new Date(values.date).toISOString().slice(0, 10),values.deliveryStatus ,userEmail], (err, connection) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(connection);
+                    }
+                });
+            })
+
+            return { msg: 'Review added to wishlist successfully', review: add }
+        } catch (err) {
+            console.error(err);
+            return { errors: [{ msg: 'Server error !' }] }
+        }
+    }
+    async getOrders(email) {
+        try {
+            const connection = await new Promise((resolve, reject) => {
+                this.pool.getConnection((err, connection) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(connection);
+                    }
+                });
+            });
+            const userEmail = email;
+
+            const items = await new Promise((resolve, reject) => {
+                connection.query(`
+                SELECT * FROM commande
+                WHERE accompli = ?
+              `, [userEmail], (err, connection) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(connection);
+                    }
+                });
+            })
+
+            return items
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     async addReview(id, email, review) {
         console.log(review)
         const connection = await new Promise((resolve, reject) => {
@@ -43,6 +117,7 @@ const controller = class ProductsController {
             return { errors: [{ msg: 'Server error !' }] }
         }
     }
+
     async addToWishList(id, email) {
         const connection = await new Promise((resolve, reject) => {
             this.pool.getConnection((err, connection) => {

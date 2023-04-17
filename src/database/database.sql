@@ -34,8 +34,10 @@ CREATE TABLE IF NOT EXISTS panier
 
 
 CREATE TABLE IF NOT EXISTS commande (
-  numero_de_commande INT PRIMARY KEY,
+  numero_de_commande INT PRIMARY KEY AUTO_INCREMENT,
   montant_total DECIMAL(10,2),
+  statut_payement enum('En attente de payement', 'Payé' ),
+  methode_payement enum('credit card', 'PayPal', 'pay on delivery'),
   id_panier INT,
   date_de_commande DATE,
   statut_de_livraison enum('livré','sortie pour livraison', 'traitement de la commande'),
@@ -133,15 +135,6 @@ CREATE TABLE IF NOT EXISTS ListeReview (
   FOREIGN KEY (review_id) REFERENCES Reviews (id_review)
 );
 
-CREATE TABLE IF NOT EXISTS Facture (
-  id_facture INT NOT NULL AUTO_INCREMENT,
-  date_et_heure DATETIME,
-  statut_payement enum('En attente de payement', 'Payé' ),
-  methode_payement enum('credit card', 'PayPal'),
-  montant INT NOT NULL,
-  PRIMARY KEY (id_facture)
-);
-
 
 
 ALTER TABLE produits ADD quantite_produit int;
@@ -156,9 +149,6 @@ ALTER TABLE ListeReview
 
 ALTER TABLE Reviews
     ADD COLUMN donne CHAR(80) NOT NULL;
-
-ALTER TABLE Facture
-    ADD COLUMN paie varchar(80) NOT NULL;
 
 ALTER TABLE commande
     ADD COLUMN accompli varchar(80) NOT NULL ;
@@ -181,11 +171,6 @@ ALTER TABLE produits
 
 ALTER TABLE commande
     ADD FOREIGN KEY (accompli) REFERENCES Clients(adresse_courriel) ON DELETE NO ACTION ;
-
-
-ALTER TABLE Facture
-    ADD FOREIGN KEY (paie) REFERENCES Clients(adresse_courriel) ON DELETE NO ACTION ;
-
 
 
 ALTER TABLE produits

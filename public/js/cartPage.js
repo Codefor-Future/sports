@@ -1,7 +1,25 @@
 // Updating active link on navbar
 document.querySelector('.active').classList.remove('active');
 document.querySelector('a[href="/products"]').classList.add('active');
+const createOrderButton = document.getElementById('createOrderButton')
 
+createOrderButton.addEventListener('click', ()=>{
+    let total = createOrderButton.getAttribute('data-product-id');
+    let date = new Date()
+    createOrder(total,'En attente de payement', 'pay on delivery', date, 'traitement de la commande' )
+})
+const createOrder = async (total, paymentStatus, paymentMethod, date, deliveryStatus) => {
+    
+    try {
+        let res = await axios.post('/ajax/createOrder', {
+            total, paymentStatus, paymentMethod, date, deliveryStatus
+        })
+        alert("success!")
+        console.log(res)
+    } catch (error) {
+        console.log(error)
+    }
+};
 // Add product
 const addButtons = document.querySelectorAll('.bi-caret-right-fill');
 

@@ -4,12 +4,6 @@ const mysql = require('mysql');
 const config = require('../config/app-config.js');
 
 var db = fs.readFileSync(path.join(__dirname , 'database.sql')).toString();
-var users = fs.readFileSync(path.join(__dirname , 'ecommerce_users.sql')).toString();
-var products = fs.readFileSync(path.join(__dirname , 'ecommerce_products.sql')).toString();
-var sizes = fs.readFileSync(path.join(__dirname , 'ecommerce_sizes.sql')).toString();
-var cart = fs.readFileSync(path.join(__dirname , 'ecommerce_cart.sql')).toString();
-var orders = fs.readFileSync(path.join(__dirname , 'ecommerce_orders.sql')).toString();
-var ordersItems = fs.readFileSync(path.join(__dirname , 'ecommerce_orders_items.sql')).toString();
 
 con = mysql.createConnection(config.populateCon);
 
