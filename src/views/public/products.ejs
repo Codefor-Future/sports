@@ -16,33 +16,56 @@
 				<div class="row">
 					<div class="col"></div>
 					<div class="col-9 row justify-content-around" id="productsList">
-						<% for (let i=0 ; i < products.length; i++) { %>
-							<div class="card my-5 mr-2 col-3">
-								<img src="<%= products[i].image %>" class="card-img-top" alt="product image">
-								<div class="card-body">
-									<h5 class="font-weight-bold">
-										<%= products[i].nom_du_produit %>
-									</h5>
-									<div class="d-flex">
-										<h6 class="font-weight-light">
+						<div class="w-100">
+							<input class="rounded p-2" type="text" id="searchInput" placeholder="Search products...">
+							<div class="d-flex w-100">
+								<% for (let i=0 ; i < products.length; i++) { %>
+									<div class="card my-5 mr-2 col-3" data-title="<%= products[i].nom_du_produit %>">
+									  <img src="<%= products[i].image %>" class="card-img-top" alt="product image">
+									  <div class="card-body">
+										<h5 class="font-weight-bold">
+										  <%= products[i].nom_du_produit %>
+										</h5>
+										<div class="d-flex">
+										  <h6 class="font-weight-light">
 											<%= products[i].marque %>
-										</h6>
-										<p class="p-0 m-0 ml-1 font-italic" style="font-size: 12px;">
+										  </h6>
+										  <p class="p-0 m-0 ml-1 font-italic" style="font-size: 12px;">
 											(<%= products[i].sexe %>)
+										  </p>
+										</div>
+										<p class="" style="font-size: 14px;">
+										  <%= products[i].description %>
 										</p>
+										<h3 class="card-title ">
+										  <%= products[i].prix_de_vente %>
+										  <span style="font-size: 15px;">$</span>
+										</h5>
+										<a href="/order?p=<%= products[i].numero_de_reference %>" class="btn btn-dark">View Product</a>
+									  </div>
 									</div>
-									<p class="" style="font-size: 14px;">
-										<%= products[i].description %>
-									</p>
-									<h3 class="card-title ">
-										<%= products[i].prix_de_vente %>
-											<span style="font-size: 15px;">$</span>
-											</h5>
-											<a href="/order?p=<%= products[i].numero_de_reference %>"
-												class="btn btn-dark">View Product</a>
-								</div>
+								  <% } %>
 							</div>
-							<% } %>
+						  </div>
+						  
+						  <script>
+							const searchInput = document.getElementById("searchInput");
+							searchInput.addEventListener('keyup', filterProducts)
+							function filterProducts() {
+							  
+							  const filter = searchInput.value.toUpperCase();
+							  const cards = document.querySelectorAll(".card");
+						  
+							  cards.forEach(card => {
+								const title = card.getAttribute("data-title").toUpperCase();
+								if (title.includes(filter)) {
+								  card.style.display = "";
+								} else {
+								  card.style.display = "none";
+								}
+							  });
+							}
+						  </script>
 					</div>
 					<div class="col"></div>
 				</div>

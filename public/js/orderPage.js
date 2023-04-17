@@ -105,11 +105,12 @@ const addReview = async (product, comment) => {
         let res = await axios.post('/ajax/addReview', {
             product,
             review: {
-                note:5,
+                note:rating,
                 comment 
             }
         })
         console.log(res)
+        location.reload()
     } catch (error) {
         console.log(error)
     }
@@ -128,6 +129,7 @@ const addToCart = async (product) => {
             }
         })
         console.log(res)
+        alert("Added to Cart")
     } catch (error) {
         console.log(error)
     }
@@ -143,6 +145,7 @@ const addToWishList = async (product) => {
             product
         })
         console.log(res)
+        alert("Added to wishlist")
     } catch (error) {
         console.log(error)
     }
