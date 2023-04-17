@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../templates/head.ejs') -%>
+
+	<body class="bg-primary">
+		<%- include('../templates/header.ejs') -%>
+
+			<div class="banner position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center text-white bg-light">
+				<div class="col-md-5 mx-auto">
+					<h1 class="display-4 font-weight-bold">Products</h1>
+					<p class="lead font-weight-normal">Your one-stop shop for all your sports wear needs</p>
+				</div>
+			</div>
+
+			<div class="container-fluid">
+				<div class=" mt-3">
+					<div class="justify-content-around">
+
+						<div class="card mb-3 mt-4 text-white bg-dark mb-3 p-4">
+							<div class="row no-gutters">
+								<div class="col-md-4">
+									<img src="<%= product[0].image %>" class="card-img" alt="product photo">
+									<div class="container">
+										<div class="row mt-2">
+											<img src="<%= product[0].image %>"
+												class="col-4 border rounded product-thumbnail" alt="product photo">
+										</div>
+									</div>
+								</div>
+								<div class="col-md-8">
+
+									<div class="card-body">
+										<h1 class="card-title">
+											<%= product[0].nom_du_produit %>
+										</h1>
+										<h5 class="card-title">
+											<%= product[0].marque %>
+										</h5>
+										<p class="card-text">
+											<%= product[0].description %>
+										</p>
+
+
+										<div class="card-text">
+											<div class="d-flex justify-content-around mt-4">
+												<% for (let i=0; i < product.length; i++) { %>
+													<div class="mb-3">
+
+													</div>
+													<% } %>
+											</div>
+											<div class="d-flex">
+												<div class="align-self-center text-center mt-3 mx-3">
+													<button class="btn btn-lg btn-light" id="addToCartButton"
+														data-product-id="<%= product[0].numero_de_reference %>"
+														data-placement="left">
+														Add to cart
+													</button>
+												</div>
+												<div class="align-self-center text-center mt-3 mx-3">
+													<button class="btn btn-lg btn-dark" id="addToWishList"
+														data-product-id="<%= product[0].numero_de_reference %>"
+														data-placement="left">
+														Add to wishlist
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+
+								</div>
+								<div class="py-5">
+									<h4>Reviews(<%= reviews.length %>)</h4>
+									<div class="d-flex flex-wrap mb-5">
+										<% for (let i=0 ; i < reviews.length; i++) { %>
+											<div class=" mr-2 text-light border rounded p-3">
+												<div class="">
+													<p class="p-0 m-0" style="font-size: 12px;">
+														<%= reviews[i].donne %>
+													</p>
+													<p class="p-0 m-0">
+														<%= reviews[i].commentaire %>
+													</p>
+													<p class="p-0 m-0">
+														<%= reviews[i].note %> stars
+													</p>
+												</div>
+											</div>
+											<% } %>
+									</div>
+									<style>
+										.star {
+											background: none;
+											color: inherit;
+											border: none;
+											padding: 0;
+											font: inherit;
+											cursor: pointer;
+											outline: inherit;
+										}
+									</style>
+									<div>
+										<button id="startRatingStars1" class="star"
+											data-product-id="<%= product[0].numero_de_reference %>">⭐</button>
+										<button id="startRatingStars2" class="star"
+											data-product-id="<%= product[0].numero_de_reference %>">⭐</button>
+										<button id="startRatingStars3" class="star"
+											data-product-id="<%= product[0].numero_de_reference %>">⭐</button>
+										<button id="startRatingStars4" class="star"
+											data-product-id="<%= product[0].numero_de_reference %>">⭐</button>
+										<button id="startRatingStars5" class="star"
+											data-product-id="<%= product[0].numero_de_reference %>">⭐</button>
+										<span id="ratingValue"></span>
+									</div>
+									<textarea name="review" id="Review" cols="30" rows="5"
+										placeholder="Add review"></textarea>
+									<button class="btn btn-lg btn-warning" id="addReviewButton"
+										data-product-id="<%= product[0].numero_de_reference %>" data-placement="left">
+										Add review
+									</button>
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<div class="col"></div>
+				</div>
+			</div>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.5/axios.min.js"
+				integrity="sha512-nnNHpffPSgINrsR8ZAIgFUIMexORL5tPwsfktOTxVYSv+AUAILuFYWES8IHl+hhIhpFGlKvWFiz9ZEusrPcSBQ=="
+				crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+			<script src="/node_modules/jquery/dist/jquery.js"></script>
+			<script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+			<script src="/public/js/orderPage.js"></script>
+	</body>
+
+</html>

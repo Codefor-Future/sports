@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../templates/head.ejs') -%>
+
+	<body class="bg-primary">
+		<%- include('../templates/header.ejs') -%>
+
+			<div class="banner position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center text-white bg-light">
+				<div class="col-md-5 mx-auto">
+					<h1 class="display-4 font-weight-bold">Products</h1>
+					<p class="lead font-weight-normal">Your one-stop shop for all your sports wear needs</p>
+				</div>
+			</div>
+
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col"></div>
+					<div class="col-9 row justify-content-around" id="productsList">
+						<div class="w-100">
+							<input class="rounded p-2" type="text" id="searchInput" placeholder="Search products...">
+							<div class="d-flex w-100">
+								<% for (let i=0 ; i < products.length; i++) { %>
+									<div class="card my-5 mr-2 col-3" data-title="<%= products[i].nom_du_produit %>">
+									  <img src="<%= products[i].image %>" class="card-img-top" alt="product image">
+									  <div class="card-body">
+										<h5 class="font-weight-bold">
+										  <%= products[i].nom_du_produit %>
+										</h5>
+										<div class="d-flex">
+										  <h6 class="font-weight-light">
+											<%= products[i].marque %>
+										  </h6>
+										  <p class="p-0 m-0 ml-1 font-italic" style="font-size: 12px;">
+											(<%= products[i].sexe %>)
+										  </p>
+										</div>
+										<p class="" style="font-size: 14px;">
+										  <%= products[i].description %>
+										</p>
+										<h3 class="card-title ">
+										  <%= products[i].prix_de_vente %>
+										  <span style="font-size: 15px;">$</span>
+										</h5>
+										<a href="/order?p=<%= products[i].numero_de_reference %>" class="btn btn-dark">View Product</a>
+									  </div>
+									</div>
+								  <% } %>
+							</div>
+						  </div>
+						  
+						  <script>
+							const searchInput = document.getElementById("searchInput");
+							searchInput.addEventListener('keyup', filterProducts)
+							function filterProducts() {
+							  
+							  const filter = searchInput.value.toUpperCase();
+							  const cards = document.querySelectorAll(".card");
+						  
+							  cards.forEach(card => {
+								const title = card.getAttribute("data-title").toUpperCase();
+								if (title.includes(filter)) {
+								  card.style.display = "";
+								} else {
+								  card.style.display = "none";
+								}
+							  });
+							}
+						  </script>
+					</div>
+					<div class="col"></div>
+				</div>
+			</div>
+			<!-- <button class="btn-lg btn-warning d-block mx-auto my-5" id="loadBtn" data-page='1'>Load More</button> -->
+			<script src="/public/js/productsPage.js"></script>
+	</body>
+
+</html>
