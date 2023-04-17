@@ -53,6 +53,36 @@ router.post("/addToCart", async (req, res) => {
 
     res.send(response)
 });
+router.post("/addToWishList", async (req, res) => {
+    const CartController = require('../controllers/cart.js');
+    const Cart = new CartController();
+    let response;
+
+    try {
+        console.log(req.body.product)
+        response = await Cart.addToWishList(req.body.product, req.session.passport.user);
+    } catch (e) {
+        console.log(e)
+        response = e;
+    }
+
+    res.send(response)
+});
+router.post("/addReview", async (req, res) => {
+    const CartController = require('../controllers/cart.js');
+    const Cart = new CartController();
+    let response;
+
+    try {
+        console.log(req.body.product)
+        response = await Cart.addReview(req.body.product, req.session.passport.user, req.body.review);
+    } catch (e) {
+        console.log(e)
+        response = e;
+    }
+
+    res.send(response)
+});
 
 // Load paginated products
 router.get("/loadPage", async (req, res) => {

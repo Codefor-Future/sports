@@ -26,7 +26,7 @@ router.use(bodyParser.urlencoded({ extended: false })); // support encoded bodie
 router.use(passport.initialize());
 router.use(passport.session());
 
-router.use(async function(req,res,next) {
+router.use(async function (req, res, next) {
     const UsersController = require('../controllers/users.js');
     const User = new UsersController();
 
@@ -55,10 +55,10 @@ router.get("/products", async (req, res) => {
         products = await Products.getPaginated(page = 0);
     } catch (e) {
         console.log(e)
-        res.render(`${config.views}/public/error.ejs`, {error: e});
+        res.render(`${config.views}/public/error.ejs`, { error: e });
     }
 
-    res.render(`${config.views}/public/products.ejs`, {products: products});
+    res.render(`${config.views}/public/products.ejs`, { products: products });
 });
 
 // Product order page
@@ -68,11 +68,13 @@ router.get("/order", authenticate(), async (req, res) => {
 
     try {
         product = await Products.getProduct(req.query.p);
+        reviews = await Products.getReviews(req.query.p);
+        console.log(reviews)
     } catch (e) {
         throw e;
     }
 
-    res.render(`${config.views}/public/order.ejs`, {product: product});
+    res.render(`${config.views}/public/order.ejs`, { product: product, reviews });
 });
 
 // cart page
@@ -91,19 +93,40 @@ router.get("/cart", authenticate(), async (req, res) => {
         // idList = Array.from(new Set(idList)).toString();
         // products = await Products.getByIdArray(idList);
         console.log(cartContent)
-    } catch(error) {
+    } catch (error) {
         console.log(error)
         cartContent = false;
     }
     if (cartContent) products = JSON.parse(JSON.stringify(cartContent))
-    res.render(`${config.views}/public/cart.ejs`, {cart: cartContent, products: products});
+    res.render(`${config.views}/public/cart.ejs`, { cart: cartContent, products: products });
+});
+router.get("/wishlist", authenticate(), async (req, res) => {
+    const ProductsController = require('../controllers/products.js');
+    const Products = new ProductsController();
+    const CartController = require('../controllers/cart.js');
+    const Cart = new CartController();
+    let items;
+    let products;
+    try {
+        items = await Cart.getWishListed(req.session.passport.user);
+        // items = JSON.parse(items.content);
+        // let idList = items.map(({ id }) => id)
+        // idList = Array.from(new Set(idList)).toString();
+        // products = await Products.getByIdArray(idList);
+        console.log(items)
+    } catch (error) {
+        console.log(error)
+        cartContent = false;
+    }
+    if (items) products = JSON.parse(JSON.stringify(items))
+    res.render(`${config.views}/public/wishList.ejs`, { products: products });
 });
 
 // checkout process
 router.get("/checkout", authenticate(), async (req, res) => {
     let formErrors = req.session.formErrors ? req.session.formErrors : false;
     req.session.formErrors = false;
-    res.render(`${config.views}/public/checkoutProcess.ejs`, {errors: formErrors});
+    res.render(`${config.views}/public/checkoutProcess.ejs`, { errors: formErrors });
 });
 
 // checkout order
@@ -113,42 +136,42 @@ router.post("/checkout", authenticate(),
     check('city').isLength({ min: 3 }),
     check('zip').isNumeric(),
     check('card').isNumeric(),
-    check('expMonth').isLength({min: 2, max: 2}),
-    check('expYear').isLength({min: 2, max: 2}),
-    check('cvCode').isLength({min: 3, max: 3})],
-async (req, res) => {
-    const errors = validationResult(req)
+    check('expMonth').isLength({ min: 2, max: 2 }),
+    check('expYear').isLength({ min: 2, max: 2 }),
+    check('cvCode').isLength({ min: 3, max: 3 })],
+    async (req, res) => {
+        const errors = validationResult(req)
 
-    if (!errors.isEmpty()) {
-        req.session.formErrors = errors.array();
-        res.redirect('/checkout');
+        if (!errors.isEmpty()) {
+            req.session.formErrors = errors.array();
+            res.redirect('/checkout');
 
-    } else {
+        } else {
 
-        const CartController = require('../controllers/cart.js');
-        const Cart = new CartController();
+            const CartController = require('../controllers/cart.js');
+            const Cart = new CartController();
 
-        const OrdersController = require('../controllers/orders.js');
-        const Orders = new OrdersController();
+            const OrdersController = require('../controllers/orders.js');
+            const Orders = new OrdersController();
 
-        let cartContent;
-        let orderId;
-        let userId = req.session.passport.user;
+            let cartContent;
+            let orderId;
+            let userId = req.session.passport.user;
 
-        try {
-            cartContent = await Cart.getContent(userId);
-            cartContent = JSON.parse(cartContent.content);
-            orderId = await Orders.create({costumer_id: userId});
-            Orders.saveOrderProducts(orderId, cartContent)
-            Cart.empty(userId);
-        } catch(e) {
-            throw e;
+            try {
+                cartContent = await Cart.getContent(userId);
+                cartContent = JSON.parse(cartContent.content);
+                orderId = await Orders.create({ costumer_id: userId });
+                Orders.saveOrderProducts(orderId, cartContent)
+                Cart.empty(userId);
+            } catch (e) {
+                throw e;
+            }
+
+            res.render(`${config.views}/public/checkout.ejs`);
         }
 
-        res.render(`${config.views}/public/checkout.ejs`);
-    }
-
-});
+    });
 
 // contact page
 router.get("/contact", (req, res) => {
@@ -156,11 +179,11 @@ router.get("/contact", (req, res) => {
 });
 
 // auth verify middleware
-function authenticate () {
-	return (req, res, next) => {
-	    if (req.isAuthenticated()) return next();
-	    res.redirect('/login')
-	}
+function authenticate() {
+    return (req, res, next) => {
+        if (req.isAuthenticated()) return next();
+        res.redirect('/login')
+    }
 }
 
 module.exports = router;

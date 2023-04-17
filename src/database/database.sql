@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS Reviews (
 );
 
 CREATE TABLE IF NOT EXISTS wish_list (
-  adresse_courriel VARCHAR(80) PRIMARY KEY,
+  adresse_courriel VARCHAR(80),
   numero_de_reference INT,
   FOREIGN KEY (adresse_courriel) REFERENCES Clients(adresse_courriel),
   FOREIGN KEY (numero_de_reference) REFERENCES produits(numero_de_reference)
@@ -257,14 +257,26 @@ VALUES
   ('Jane Smith', 'janesmith@example.com', '123XYZ!@#', '+9876543210', '456 High St, Anytown USA', '1985-05-15');
   
 INSERT INTO fournisseur (adresse_fournisseur) VALUES
-  ('123 Main St, Anytown, USA'),
-  ('456 Market St, Anytown, USA');
+('123 Main St, Anytown, USA'),
+('456 Market St, Anytown, USA'),
+('789 Broadway, Anytown, USA'),
+('321 Elm St, Anytown, USA'),
+('555 Oak Ave, Anytown, USA'),
+('777 Maple St, Anytown, USA'),
+('999 Pine Rd, Anytown, USA'),
+('789 Broadway, Anytown, USA'),
+('321 Elm St, Anytown, USA'),
+('555 Oak Ave, Anytown, USA'),
+('777 Maple St, Anytown, USA'),
+('999 Pine Rd, Anytown, USA');
+
 
 INSERT INTO produits (marque, nom_du_produit, prix_de_vente, prix_d_achat, description, sexe, fournit, image)
-VALUES 
-  ('Adidas', 'Sports Shoes', 79.99, 50.00, 'Mens sports shoes', 'homme', 1, 'https://www.shutterstock.com/image-photo/jeddah-saudi-arabia-september-8-260nw-2038241135.jpg'),
-  ('Nike', 'Sport T-shirt', 29.99, 20.00, 'Womens sport T-shirt', 'femme', 2, 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8bmlrZSUyMHNob2V8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60');
-
+VALUES
+('Puma', 'Running Shoe', 24.99, 15.00, 'Mens running shoes', 'homme', 3, 'https://images.jdmagicbox.com/quickquotes/images_main/puma-unisex-running-shoes-size-4-blue-164384362-qkxql.jpg'),
+('Reebok', 'Sport Shoe', 9.99, 5.00, 'Unisex sport shoes', 'homme', 4, 'https://rukminim1.flixcart.com/image/832/832/xif0q/shoe/x/o/l/7-ga1363-reebok-black-vector-red-original-imaghg49fmcufunp.jpeg?q=70'),
+('New Balance', 'Running Shoes', 89.99, 60.00, 'Womens running shoes', 'femme', 6, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsjkU0pebgY91X89RS0vDAIKcmKbv3yrSFKg&usqp=CAU'),
+('Asics', 'Sports Tank Top', 19.99, 12.00, 'Mens sports tank top', 'homme', 7, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUOYNSlWXUZyHuBiOqXenMj8M8gvmA3_PYRQ&usqp=CAU')
 
 
 /*

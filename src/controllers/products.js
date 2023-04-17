@@ -31,7 +31,16 @@ const controller = class produitsController {
             });
         });
     }
+    getReviews(id) {
+        return new Promise((resolve, reject) => {
+            // this.con.query('SELECT * FROM produits JOIN sizes ON produits.id = sizes.product_id WHERE id ='+id, function (err, result) {
+            this.con.query('SELECT * FROM Reviews  WHERE numero_de_reference =' + id, function (err, result) {
+                if (err) reject(err)
 
+                resolve(result);
+            });
+        });
+    }
     getProduct(id) {
         return new Promise((resolve, reject) => {
             // this.con.query('SELECT * FROM produits JOIN sizes ON produits.id = sizes.product_id WHERE id ='+id, function (err, result) {
@@ -106,7 +115,7 @@ const controller = class produitsController {
 
     getPaginated(page) {
         return new Promise((resolve, reject) => {
-            this.con.query('SELECT * FROM `produits` ORDER BY numero_de_reference ASC LIMIT 3 OFFSET ?', [page * 3], function (err, result) {
+            this.con.query('SELECT * FROM `produits` ORDER BY numero_de_reference ASC LIMIT 10 OFFSET ?', [page * 3], function (err, result) {
                 if (err) reject(err);
                 if (result.length < 1) {
                     reject(new Error("No more produits"));

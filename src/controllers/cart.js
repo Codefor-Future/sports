@@ -8,8 +8,151 @@ const controller = class ProductsController {
         // mysql connection
         this.pool = mysql.createPool(config.sqlCon);
     }
+    async addReview(id, email, review) {
+        console.log(review)
+        const connection = await new Promise((resolve, reject) => {
+            this.pool.getConnection((err, connection) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(connection);
+                }
+            });
+        });
 
-    // gey
+        try {// Get product ID and user email from request body
+            const productId = id;
+            const userEmail = email;
+
+            // Add product to wishlist
+            const add = await new Promise((resolve, reject) => {
+                connection.query('INSERT INTO Reviews (note, numero_de_reference, commentaire, donne) VALUES (?, ?, ?, ?)', [review.note, productId, review.comment, userEmail], (err, connection) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(connection);
+                    }
+                });
+            })
+
+            // Send success response
+
+            return { msg: 'Review added to wishlist successfully', review: add }
+        } catch (err) {
+            console.error(err);
+            return { errors: [{ msg: 'Server error !' }] }
+        }
+    }
+    async addToWishList(id, email) {
+        const connection = await new Promise((resolve, reject) => {
+            this.pool.getConnection((err, connection) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(connection);
+                }
+            });
+        });
+
+        try {// Get product ID and user email from request body
+            const productId = id;
+            const userEmail = email;
+
+            // Check if user exists
+            const users = await new Promise((resolve, reject) => {
+                connection.query('SELECT * FROM Clients WHERE adresse_courriel = ?', [userEmail], (err, connection) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(connection);
+                    }
+                });
+            })
+            if (users.length === 0) {
+                return { error: 'User not found' }
+            }
+
+            // Check if product exists
+            const products = await new Promise((resolve, reject) => {
+                connection.query('SELECT * FROM produits WHERE numero_de_reference = ?', [productId], (err, connection) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(connection);
+                    }
+                });
+            })
+            if (products.length === 0) {
+                return { error: 'Product not found' }
+            }
+
+            // Check if product is already in user's wishlist
+            const wishlist = await new Promise((resolve, reject) => {
+                connection.query('SELECT * FROM wish_list WHERE adresse_courriel = ? AND numero_de_reference = ?', [userEmail, productId], (err, connection) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(connection);
+                    }
+                });
+            })
+            if (wishlist.length > 0) {
+                return { error: 'Product already in wishlist' }
+            }
+
+            // Add product to wishlist
+            const add = await new Promise((resolve, reject) => {
+                connection.query('INSERT INTO wish_list (adresse_courriel, numero_de_reference) VALUES (?, ?)', [userEmail, productId], (err, connection) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(connection);
+                    }
+                });
+            })
+
+            // Send success response
+
+            return { msg: 'Product added to wishlist successfully' }
+        } catch (err) {
+            console.error(err);
+            return { errors: [{ msg: 'Server error !' }] }
+        }
+    }
+    async getWishListed(email) {
+        try {
+            const connection = await new Promise((resolve, reject) => {
+                this.pool.getConnection((err, connection) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(connection);
+                    }
+                });
+            });
+            const userEmail = email;
+
+            const items = await new Promise((resolve, reject) => {
+                connection.query(`
+                SELECT produits.*
+                FROM wish_list
+                INNER JOIN produits ON produits.numero_de_reference = wish_list.numero_de_reference
+                WHERE wish_list.adresse_courriel = ?
+              `, [userEmail], (err, connection) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(connection);
+                    }
+                });
+            })
+
+            return items
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    // 
 
     async addToCart(newProduct, email) {
         const connection = await new Promise((resolve, reject) => {
@@ -148,53 +291,6 @@ const controller = class ProductsController {
             console.log(error)
         }
     }
-
-    // update(updateProduct, user) {
-    //     return new Promise(async (resolve, reject) => {
-
-    //         try {
-    //             let cartContent = await this.getContent(user);
-    //             let cartProducts = JSON.parse(cartContent.content);
-    //             let found = false;
-
-    //             for (let cartProduct of cartProducts) {
-    //                 if (cartProduct.id == updateProduct.id && cartProduct.size == updateProduct.size) {
-    //                     found = true;
-    //                     if (updateProduct.quantity > 0) {
-    //                         cartProduct.quantity = updateProduct.quantity;
-    //                     } else {
-    //                         let index = cartProducts.indexOf(cartProduct);
-    //                         cartProducts.splice(index, 1);
-    //                     }
-    //                 }
-    //             }
-
-    //             if (!found) cartProducts.push(updateProduct);
-
-    //             cartProducts = JSON.stringify(cartProducts);
-
-    //             connection.query('UPDATE `cart` SET `content` = ? WHERE `user_id` = ?', [cartProducts, user], function (err, result) {
-    //                 if (err) reject(new Error('Database connection error'));
-    //                 resolve('Added to the cart!');
-    //             });
-
-    //         } catch {
-    //             reject(new Error('Could not access cart'))
-    //         }
-    //     });
-    // }
-
-    // empty(user) {
-    //     return new Promise((resolve, reject) => {
-    //         connection.query('DELETE FROM `cart` WHERE `user_id` ="' + user + '"', function (err, result) {
-    //             if (err) {
-    //                 reject(new Error('Database connection error'))
-    //             } else {
-    //                 resolve('Cart emptied');
-    //             }
-    //         });
-    //     });
-    // }
 }
 
 module.exports = controller;
