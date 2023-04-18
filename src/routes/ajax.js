@@ -52,6 +52,23 @@ router.post("/createOrder", async (req, res) => {
 
     res.send(response)
 });
+router.post("/register", async (req, res) => {
+    const CartController = require('../controllers/cart.js');
+    const Cart = new CartController();
+    let response;
+
+    try {
+        response = await Cart.createUser(req.body);
+    } catch (e) {
+        response = e;
+    }
+    if(response.msg == "Register successful you can login now."){
+        res.redirect('/login')
+    }else{
+        res.send(response)
+    }
+    
+});
 // Add products to cart
 router.post("/addToCart", async (req, res) => {
     const CartController = require('../controllers/cart.js');

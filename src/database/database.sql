@@ -22,6 +22,25 @@ CREATE TABLE IF NOT EXISTS Clients
   DateDeNaissance  date
 );
 
+-- procedure
+CREATE PROCEDURE check_user_exists(
+    IN email VARCHAR(80),
+    OUT userExists BOOLEAN
+)
+BEGIN
+    DECLARE count INT;
+
+    SELECT COUNT(*) INTO count
+    FROM Clients
+    WHERE adresse_courriel = email;
+
+    IF count > 0 THEN
+        SET userExists = TRUE;
+    ELSE
+        SET userExists = FALSE;
+    END IF;
+END;
+
 
 CREATE TABLE IF NOT EXISTS panier 
 (

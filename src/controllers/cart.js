@@ -8,6 +8,57 @@ const controller = class ProductsController {
         // mysql connection
         this.pool = mysql.createPool(config.sqlCon);
     }
+    // user creation
+    async createUser(values) {
+        const connection = await new Promise((resolve, reject) => {
+            this.pool.getConnection((err, connection) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(connection);
+                }
+            });
+        });
+
+        try {// Get product ID and user email from request body
+            const email = values.email;
+
+            // fetch card id
+            const userExists = await new Promise((resolve, reject) => {
+                connection.query('CALL check_user_exists(?, @userExists)', [email], (err, results) => {
+                  if (err) {
+                    reject(err);
+                  } else {
+                    connection.query('SELECT @userExists', (err, results) => {
+                      if (err) {
+                        reject(err);
+                      } else {
+                        resolve(results[0]['@userExists']);
+                      }
+                    });
+                  }
+                });
+              });
+            if(userExists == 1){
+                return { errors: [{ msg: 'User already exists !' }] }
+            }
+
+            const add = await new Promise((resolve, reject) => {
+                connection.query('INSERT INTO Clients (nom, adresse_courriel, mot_de_passe, numero_telephone, adresse, DateDeNaissance) VALUES (?,?,?,?,?,?)', [values.name, values.email, values.password, values.phone,values.address,  new Date(values.dob).toISOString().slice(0, 10)], (err, connection) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(connection);
+                    }
+                });
+            })
+
+            return { msg: 'Register successful you can login now.' }
+        } catch (err) {
+            console.error(err);
+            return { errors: [{ msg: 'Error! Please check all fields obey the regex rules.' }] }
+        }
+    }
     async createOrder(values, email) {
         const connection = await new Promise((resolve, reject) => {
             this.pool.getConnection((err, connection) => {

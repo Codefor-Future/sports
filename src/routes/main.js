@@ -45,6 +45,9 @@ router.use(async function (req, res, next) {
 router.get("/", (req, res) => {
     res.render(`${config.views}/public/index.ejs`);
 });
+router.get("/register", (req, res) => {
+    res.render(`${config.views}/public/register.ejs`);
+});
 
 // Products page
 router.get("/products", async (req, res) => {
