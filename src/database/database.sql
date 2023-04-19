@@ -22,6 +22,18 @@ CREATE TABLE IF NOT EXISTS Clients
   DateDeNaissance  date
 );
 
+CREATE FUNCTION get_client_age(adresse_courriel VARCHAR(80))
+RETURNS INT
+BEGIN
+    DECLARE client_age INT;
+
+    SELECT TIMESTAMPDIFF(YEAR, DateDeNaissance, CURDATE()) INTO client_age
+    FROM Clients
+    WHERE adresse_courriel = adresse_courriel;
+
+    RETURN client_age;
+END;
+
 -- procedure
 CREATE PROCEDURE check_user_exists(
     IN email VARCHAR(80),
@@ -51,6 +63,21 @@ CREATE TABLE IF NOT EXISTS panier
   FOREIGN KEY (adresse_courriel) REFERENCES Clients(adresse_courriel)
 );
 
+CREATE FUNCTION panier_exists(adresse_courriel VARCHAR(80))
+RETURNS BOOLEAN
+BEGIN
+    DECLARE count INT;
+
+    SELECT COUNT(*) INTO count
+    FROM panier
+    WHERE adresse_courriel = adresse_courriel;
+
+    IF count > 0 THEN
+        RETURN TRUE;
+    ELSE
+        RETURN FALSE;
+    END IF;
+END;
 
 CREATE TABLE IF NOT EXISTS commande (
   numero_de_commande INT PRIMARY KEY AUTO_INCREMENT,
@@ -96,6 +123,25 @@ CREATE TABLE IF NOT EXISTS produits (
   image VARCHAR(1000),
   UNIQUE (numero_de_reference)
 );
+
+CREATE PROCEDURE check_product_exists(
+    IN productName VARCHAR(255),
+    OUT productExists BOOLEAN
+)
+BEGIN
+    DECLARE count INT;
+
+    SELECT COUNT(*) INTO count
+    FROM produits
+    WHERE nom_du_produit = productName;
+
+    IF count > 0 THEN
+        SET productExists = TRUE;
+    ELSE
+        SET productExists = FALSE;
+    END IF;
+END;
+
 -- jn box between product and panier
 CREATE TABLE IF NOT EXISTS panier_produits (
   id_panier INT,
